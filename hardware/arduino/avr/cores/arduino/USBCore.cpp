@@ -67,12 +67,32 @@ const u8 STRING_MANUFACTURER[] PROGMEM = USB_MANUFACTURER;
 
 #define DEVICE_CLASS 0x02
 
+// edit by NicoHood
+// added new definitions for correct USB descriptors
+// there are even more, these are the ones we need
+#define USB_DEVICE_CLASS_IAD                   0xEF
+#define USB_DEVICE_SUB_CLASS_IAD               0x02
+#define USB_DEVICE_PROTOCOL_IAD                0x01
+
+#define USB_DEVICE_CDC_CLASS                   0x02
+#define USB_DEVICE_CDC_SUB_CLASS               0x00
+#define USB_DEVICE_CDC_PROTOCOL                0x00 // NoSpecific Protocol
+
+#define USB_DEVICE_NO_CLASS                    0x00
+#define USB_DEVICE_NO_SUB_CLASS                0x00
+#define USB_DEVICE_NO_PROTOCOL                 0x00
+
+#define USB_CONFIG_POWERED_MASK                0x40
+#define USB_CONFIG_BUS_POWERED                 0x80
+#define USB_CONFIG_SELF_POWERED                0xC0
+#define USB_CONFIG_REMOTE_WAKEUP               0x20
+
 //	DEVICE DESCRIPTOR
 const DeviceDescriptor USB_DeviceDescriptor =
-	D_DEVICE(0x00,0x00,0x00,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,0,1);
+	D_DEVICE(USB_DEVICE_CLASS_IAD, USB_DEVICE_SUB_CLASS_IAD, USB_DEVICE_PROTOCOL_IAD,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,0,1);
 
 const DeviceDescriptor USB_DeviceDescriptorB =
-	D_DEVICE(0xEF,0x02,0x01,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,0,1);
+	D_DEVICE(USB_DEVICE_NO_CLASS, USB_DEVICE_NO_SUB_CLASS, USB_DEVICE_NO_PROTOCOL,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,0,1);
 
 //==================================================================
 //==================================================================
