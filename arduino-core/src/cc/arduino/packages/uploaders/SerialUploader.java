@@ -150,6 +150,10 @@ public class SerialUploader extends Uploader {
     } else {
       prefs.put("upload.verbose", prefs.getOrExcept("upload.params.quiet"));
     }
+    
+    System.out.println("Test");
+    String[] cmd2 = { "stty -F " + userSelectedUploadPort + " 2000000" } ;
+    executeUploadCommand(cmd2);
 
     boolean uploadResult;
     try {
