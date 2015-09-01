@@ -29,7 +29,8 @@ void initVariant() { }
 
 void setupUSB() __attribute__((weak));
 void setupUSB() {
-#if MAGIC_KEY_POS != (RAMEND-1)
+
+#if defined(USBCON) && (MAGIC_KEY_POS != (RAMEND-1))
 	USBDevice.attach();
 #endif
 }
@@ -40,7 +41,9 @@ int main(void)
 
 	initVariant();
 
+#if defined(USBCON)
 	setupUSB();
+#endif
 	
 	setup();
     
