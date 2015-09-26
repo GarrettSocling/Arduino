@@ -25,6 +25,16 @@
 
 #define MAX_MODULES	6
 
+#include "PluggableUSB.h"
+#include "USBDevice.h"
+
+PUSB_ PUSB;
+
+PUSB_::PUSB_(void)
+{
+
+}
+
 static u8 lastIf = CDC_ACM_INTERFACE + CDC_INTERFACE_COUNT;
 static u8 lastEp = CDC_FIRST_ENDPOINT + CDC_ENPOINT_COUNT;
 

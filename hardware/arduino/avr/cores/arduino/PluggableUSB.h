@@ -48,6 +48,21 @@ public:
   PUSBListNode(PUSBCallbacks *ncb) {cb = ncb;}
 };
 
+class USBDevice;
+
+class PUSB_
+{
+public:
+  PUSB_(void);
+  
+  // Only access this class via the USBDevice
+private:
+  friend USBDevice;
+  void AppendDescriptor(USBDevice* device);
+  
+  // TODO add root device, search functions etc
+};
+
 int8_t PUSB_AddFunction(PUSBListNode *node, u8 *interface);
 
 int PUSB_GetInterface(u8* interfaceNum);
