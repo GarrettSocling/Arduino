@@ -23,13 +23,13 @@
 
 HID_ HID;
 
-static u8 HID_ENDPOINT_INT;
+static uint8_t HID_ENDPOINT_INT;
 
 //================================================================================
 //================================================================================
 //	HID Interface
 
-static u8 HID_INTERFACE;
+static uint8_t HID_INTERFACE;
 
 HIDDescriptor _hidInterface;
 
@@ -40,10 +40,10 @@ static uint8_t modules_count = 0;
 //================================================================================
 //	Driver
 
-u8 _hid_protocol = 1;
-u8 _hid_idle = 1;
+uint8_t _hid_protocol = 1;
+uint8_t _hid_idle = 1;
 
-int HID_GetInterface(u8* interfaceNum)
+int HID_GetInterface(uint8_t* interfaceNum)
 {
 	interfaceNum[0] += 1;	// uses 1
 	_hidInterface =
@@ -61,7 +61,7 @@ int HID_GetDescriptor(int8_t t)
 		HIDDescriptorListNode* current = rootNode;
 		int total = 0;
 		while(current != NULL) {
-			total += USB_SendControl(TRANSFER_PGM,current->cb->descriptor,current->cb->length);
+			total += USB_SendControl(TRANSFER_PGM,current->data,current->length);
 			current = current->next;
 		}
 		return total;
@@ -82,7 +82,7 @@ void HID_::AppendDescriptor(HIDDescriptorListNode *node)
 		current->next = node;
 	}
 	modules_count++;
-	sizeof_hidReportDescriptor += (uint16_t)node->cb->length;
+	sizeof_hidReportDescriptor += (uint16_t)node->length;
 }
 
 void HID_::SendReport(u8 id, const void* data, int len)
@@ -91,13 +91,13 @@ void HID_::SendReport(u8 id, const void* data, int len)
 	USB_Send(HID_TX | TRANSFER_RELEASE,data,len);
 }
 
-bool HID_Setup(USBSetup& setup, u8 i)
+bool HID_Setup(USBSetup& setup, uint8_t i)
 {
 	if (HID_INTERFACE != i) {
 		return false;
 	} else {
-		u8 r = setup.bRequest;
-		u8 requestType = setup.bmRequestType;
+		uint8_t r = setup.bRequest;
+		uint8_t requestType = setup.bmRequestType;
 		if (REQUEST_DEVICETOHOST_CLASS_INTERFACE == requestType)
 		{
 			if (HID_GET_REPORT == r)
@@ -152,6 +152,7 @@ HID_::HID_(void)
 
 int HID_::begin(void)
 {
+	return 0;
 }
 
 #endif /* if defined(USBCON) */

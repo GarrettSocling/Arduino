@@ -44,16 +44,13 @@
 #define HID_REPORT_DESCRIPTOR_TYPE      0x22
 #define HID_PHYSICAL_DESCRIPTOR_TYPE    0x23
 
-typedef struct __attribute__((packed)) {
-  uint16_t length;
-  const void* descriptor;
-} HID_Descriptor;
-
 class HIDDescriptorListNode {
 public:
   HIDDescriptorListNode *next = NULL;
-  const HID_Descriptor * cb;
-  HIDDescriptorListNode(const HID_Descriptor *ncb) {cb = ncb;}
+  HIDDescriptorListNode(const void *d, const uint16_t l) : data(d), length(l) { }
+
+  const void* data;
+  uint16_t length;
 };
 
 class HID_
@@ -67,22 +64,22 @@ public:
 
 typedef struct
 {
-  u8 len;     // 9
-  u8 dtype;   // 0x21
-  u8 addr;
-  u8  versionL; // 0x101
-  u8  versionH; // 0x101
-  u8  country;
-  u8  desctype; // 0x22 report
-  u8  descLenL;
-  u8  descLenH;
+  uint8_t len;      // 9
+  uint8_t dtype;    // 0x21
+  uint8_t addr;
+  uint8_t versionL; // 0x101
+  uint8_t versionH; // 0x101
+  uint8_t country;
+  uint8_t desctype; // 0x22 report
+  uint8_t descLenL;
+  uint8_t descLenH;
 } HIDDescDescriptor;
 
 typedef struct 
 {
-  InterfaceDescriptor     hid;
-  HIDDescDescriptor     desc;
-  EndpointDescriptor      in;
+  InterfaceDescriptor hid;
+  HIDDescDescriptor   desc;
+  EndpointDescriptor  in;
 } HIDDescriptor;
 
 #define HID_TX HID_ENDPOINT_INT
