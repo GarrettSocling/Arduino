@@ -5,9 +5,10 @@
 #if defined(USBCON)	
 #ifdef PLUGGABLE_USB_ENABLED
 
-CUSBDevice::CUSBDevice(void)
+CUSBDevice::CUSBDevice(const int8_t numEP, const int8_t numIF, const uint8_t* epType) :
+numEndpoints(numEP), numInterfaces(numIF), firstEndpoint(-1), firstInterface(-1), endpointType(epType)
 {
-    //PUSB.AppendDescriptor(this);
+    PUSB.PUSB_AddFunction(this);
 }
 
 

@@ -310,7 +310,7 @@ int USB_Send(u8 ep, const void* d, int len)
 
 u8 _initEndpoints[] =
 {
-	0,
+	0,					  	  	// Control EP
 	
 	EP_TYPE_INTERRUPT_IN,		// CDC_ENDPOINT_ACM
 	EP_TYPE_BULK_OUT,			// CDC_ENDPOINT_OUT

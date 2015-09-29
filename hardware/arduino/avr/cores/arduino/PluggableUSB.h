@@ -30,25 +30,6 @@
 // TODO where defined??
 extern u8 _initEndpoints[];
 
-
-// TODO remove old node style
-typedef struct __attribute__((packed))
-{
-  bool (*setup)(USBSetup& setup, u8 i);
-  int (*getInterface)(u8* interfaceNum);
-  int (*getDescriptor)(int8_t t);
-  int8_t numEndpoints;
-  int8_t numInterfaces;
-  uint8_t *endpointType;
-} PUSBCallbacks;
-
-class PUSBListNode {
-public:
-  PUSBListNode *next = NULL;
-  PUSBCallbacks *cb;
-  PUSBListNode(PUSBCallbacks *ncb) {cb = ncb;}
-};
-
 class CUSBDevice;
 
 class PUSB_
@@ -65,22 +46,16 @@ public:
   // Only access this class via the USBDevice
 private:
   friend CUSBDevice;
-  int8_t PUSB_AddFunction(CUSBDevice* device);
+  void PUSB_AddFunction(CUSBDevice* device);
   
   // Variables used to calculate endpoints etc
-  uint8_t numModules = 0;
-  u8 lastInterface = CDC_ACM_INTERFACE + CDC_INTERFACE_COUNT;
-  u8 lastEndpoint = CDC_FIRST_ENDPOINT + CDC_ENPOINT_COUNT;
-  
-  CUSBDevice* rootDevice = NULL;
-  
-  // TODO add root device, search functions etc
+  uint8_t numModules;
+  u8 lastInterface;
+  u8 lastEndpoint;
+  CUSBDevice* rootDevice;
 };
 
 // TODO remove old wrappers
-
-int8_t PUSB_AddFunction(PUSBListNode *node, u8 *interface);
-
 int PUSB_GetInterface(u8* interfaceNum);
 
 int PUSB_GetDescriptor(int8_t t);

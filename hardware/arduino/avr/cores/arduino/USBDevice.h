@@ -15,7 +15,7 @@ extern PUSB_ PUSB;
 class CUSBDevice
 {
 public:
-  CUSBDevice(void);
+  CUSBDevice(const int8_t numEP, const int8_t numIF, const uint8_t* epType);
   
   // Needs to be public for static PUSB_ function access
   // Inherit this device private and everything should be fine
@@ -25,10 +25,12 @@ public:
   virtual bool setup(USBSetup& setup, u8 i) = 0;
   virtual int getInterface(u8* interfaceNum) = 0;
   virtual int getDescriptor(int8_t t) = 0;
-  void test(){};
-  int8_t numEndpoints;
-  int8_t numInterfaces;
-  uint8_t *endpointType;
+
+  const int8_t numEndpoints;
+  const int8_t numInterfaces;
+  int8_t firstEndpoint;
+  int8_t firstInterface;
+  const uint8_t *endpointType;
 
 
 protected:
