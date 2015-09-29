@@ -5,7 +5,7 @@
 #if defined(USBCON)	
 #ifdef PLUGGABLE_USB_ENABLED
 
-USBDevice::USBDevice(void)
+CUSBDevice::CUSBDevice(void)
 {
     //PUSB.AppendDescriptor(this);
 }

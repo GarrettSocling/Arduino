@@ -17,15 +17,11 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "USBAPI.h"
 #include "PluggableUSB.h"
 
 #if defined(USBCON)	
 #ifdef PLUGGABLE_USB_ENABLED
 
-#define MAX_MODULES	6
-
-#include "PluggableUSB.h"
 #include "USBDevice.h"
 
 PUSB_ PUSB;
@@ -35,51 +31,93 @@ PUSB_::PUSB_(void)
 
 }
 
-static u8 lastIf = CDC_ACM_INTERFACE + CDC_INTERFACE_COUNT;
-static u8 lastEp = CDC_FIRST_ENDPOINT + CDC_ENPOINT_COUNT;
-
-extern u8 _initEndpoints[];
-
-//PUSBCallbacks cbs[MAX_MODULES];
-static u8 modules_count = 0;
-
-static PUSBListNode* rootNode = NULL;
-
-int PUSB_GetInterface(u8* interfaceNum)
+int PUSB_::PUSB_GetInterface(u8* interfaceNum)
 {
 	int ret = 0;
-	PUSBListNode* node = rootNode;
-	for (u8 i=0; i<modules_count; i++) {
-		ret = node->cb->getInterface(interfaceNum);
-		node = node->next;
+	CUSBDevice* device = rootDevice;
+	for (u8 i=0; i < numModules; i++) {
+		ret = device->getInterface(interfaceNum);
+		device = device->next;
 	}
 	return ret;
+}
+
+int PUSB_::PUSB_GetDescriptor(int8_t t)
+{
+	int ret = 0;
+	CUSBDevice* device = rootDevice;
+	for (u8 i=0; i < numModules; i++) {
+		ret = device->getDescriptor(t);
+		if(ret)
+			break;
+		device = device->next;
+	}
+	return ret;
+}
+
+bool PUSB_::PUSB_Setup(USBSetup& setup, u8 j)
+{
+	bool ret = false;
+	CUSBDevice* device = rootDevice;
+	for (u8 i=0; i < numModules; i++) {
+		ret = device->setup(setup, j);
+		if(ret)
+			break;
+		device = device->next;
+	}
+	return ret;
+}
+
+int8_t PUSB_::PUSB_AddFunction(CUSBDevice* device)
+{
+	if (numModules >= MAX_MODULES) {
+		return 0;
+	}
+
+	if (numModules == 0) {
+		rootDevice = device;
+	}
+	else {
+		CUSBDevice *current = rootDevice;
+		while(current->next != NULL) {
+			current = current->next;
+		}
+		current->next = device;
+	}
+
+	*device->endpointType = lastInterface;
+	lastInterface += device->numInterfaces;
+	for (u8 i = 0; i < device->numEndpoints; i++) {
+		_initEndpoints[lastEndpoint] = device->endpointType[i];
+		lastEndpoint++;
+	}
+	numModules++;
+	return lastEndpoint - device->numEndpoints;
+	// restart USB layer???
+}
+
+
+// TODO remove wrappers
+int PUSB_GetInterface(u8* interfaceNum)
+{
+	return PUSB.PUSB_GetInterface(interfaceNum);
 }
 
 int PUSB_GetDescriptor(int8_t t)
 {
-	int ret = 0;
-	PUSBListNode* node = rootNode;
-	for (u8 i=0; i<modules_count && ret == 0; i++) {
-		ret = node->cb->getDescriptor(t);
-		node = node->next;
-	}
-	return ret;
+	return PUSB.PUSB_GetDescriptor(t);
 }
 
 bool PUSB_Setup(USBSetup& setup, u8 j)
 {
-	bool ret = false;
-	PUSBListNode* node = rootNode;
-	for (u8 i=0; i<modules_count && ret == false; i++) {
-		ret = node->cb->setup(setup, j);
-		node = node->next;
-	}
-	return ret;
+	return PUSB.PUSB_Setup(setup, j);
 }
 
 int8_t PUSB_AddFunction(PUSBListNode *node, u8* interface)
 {
+	// TODO not implemented, incompatible with "old" API
+	return 0;
+	/*
 	if (modules_count >= MAX_MODULES) {
 		return 0;
 	}
@@ -103,6 +141,7 @@ int8_t PUSB_AddFunction(PUSBListNode *node, u8* interface)
 	modules_count++;
 	return lastEp - node->cb->numEndpoints;
 	// restart USB layer???
+	*/
 }
 
 #endif

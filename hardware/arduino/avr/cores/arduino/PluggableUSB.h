@@ -17,14 +17,21 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef PUSB_h
-#define PUSB_h
+// Include Guard
+#pragma once
 
 #include "USBAPI.h"
-#include <stdint.h>
 
 #if defined(USBCON)
 
+// TODO different for u2 series
+#define MAX_MODULES	6
+
+// TODO where defined??
+extern u8 _initEndpoints[];
+
+
+// TODO remove old node style
 typedef struct __attribute__((packed))
 {
   bool (*setup)(USBSetup& setup, u8 i);
@@ -42,20 +49,35 @@ public:
   PUSBListNode(PUSBCallbacks *ncb) {cb = ncb;}
 };
 
-class USBDevice;
+class CUSBDevice;
 
 class PUSB_
 {
 public:
   PUSB_(void);
   
+  // Called from USB-Core.cpp
+  // Needs to be public
+  int PUSB_GetInterface(u8* interfaceNum);
+  int PUSB_GetDescriptor(int8_t t);
+  bool PUSB_Setup(USBSetup& setup, u8 i);
+  
   // Only access this class via the USBDevice
 private:
-  friend USBDevice;
-  void AppendDescriptor(USBDevice* device);
+  friend CUSBDevice;
+  int8_t PUSB_AddFunction(CUSBDevice* device);
+  
+  // Variables used to calculate endpoints etc
+  uint8_t numModules = 0;
+  u8 lastInterface = CDC_ACM_INTERFACE + CDC_INTERFACE_COUNT;
+  u8 lastEndpoint = CDC_FIRST_ENDPOINT + CDC_ENPOINT_COUNT;
+  
+  CUSBDevice* rootDevice = NULL;
   
   // TODO add root device, search functions etc
 };
+
+// TODO remove old wrappers
 
 int8_t PUSB_AddFunction(PUSBListNode *node, u8 *interface);
 
@@ -64,9 +86,5 @@ int PUSB_GetInterface(u8* interfaceNum);
 int PUSB_GetDescriptor(int8_t t);
 
 bool PUSB_Setup(USBSetup& setup, u8 i);
-
-void PUSB_Begin();
-
-#endif
 
 #endif
