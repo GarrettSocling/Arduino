@@ -50,11 +50,16 @@ int PluggableUSB_::getDescriptor(int8_t type)
 	return 0;
 }
 
-bool PluggableUSB_::setup(USBSetup& setup, uint8_t j)
+bool PluggableUSB_::setup(USBSetup& setup, uint8_t interfaceNum)
 {
 	PUSBListNode* node;
 	for (node = rootNode; node; node = node->next) {
-		if (node->setup(setup, j)) {
+		// Only execute the desired interface.
+		// This also prevents calling interfaces with -1
+		// When all endpoints are full.
+		if(node->interface() == interfaceNum){
+			// TODO return value currently ignored?
+			node->setup(setup);
 			return true;
 		}
 	}

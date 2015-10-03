@@ -76,12 +76,8 @@ void HID_::SendReport(uint8_t id, const void* data, int len)
 	USB_Send(endpoint() | TRANSFER_RELEASE, data, len);
 }
 
-bool HID_::setup(USBSetup& setup, uint8_t interfaceNum)
+bool HID_::setup(USBSetup& setup)
 {
-	if (interface() != interfaceNum) {
-		return false;
-	}
-
 	uint8_t request = setup.bRequest;
 	uint8_t requestType = setup.bmRequestType;
 

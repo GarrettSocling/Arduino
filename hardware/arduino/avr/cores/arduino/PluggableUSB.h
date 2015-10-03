@@ -35,7 +35,7 @@ public:
   inline int8_t endpoint()   const { return pluggedEndpoint; }
 
 protected:
-  virtual bool setup(USBSetup& setup, uint8_t i) = 0;
+  virtual bool setup(USBSetup& setup) = 0;
   virtual int getInterface(uint8_t* interfaceNum) = 0;
   virtual int getDescriptor(int8_t t) = 0;
 
@@ -56,8 +56,8 @@ public:
   PluggableUSB_();
   bool plug(PUSBListNode *node);
   int getInterface(uint8_t* interfaceNum);
-  int getDescriptor(int8_t t);
-  bool setup(USBSetup& setup, uint8_t i);
+  int getDescriptor(int8_t type);
+  bool setup(USBSetup& setup, uint8_t interfaceNum);
 
 private:
   uint8_t lastIf;
