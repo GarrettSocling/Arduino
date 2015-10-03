@@ -43,7 +43,7 @@ protected:
   int8_t pluggedEndpoint;
 
   const int8_t numEndpoints;
-  const int8_t numInterfaces;
+  const uint8_t numInterfaces;
   const uint8_t *endpointType;
 
   PUSBListNode *next = NULL;
@@ -55,7 +55,7 @@ class PluggableUSB_ {
 public:
   PluggableUSB_();
   bool plug(PUSBListNode *node);
-  int getInterface(uint8_t* interfaceNum);
+  int getInterface(uint8_t* interfaceCount);
   int getDescriptor(int8_t type);
   bool setup(USBSetup& setup, uint8_t interfaceNum);
 

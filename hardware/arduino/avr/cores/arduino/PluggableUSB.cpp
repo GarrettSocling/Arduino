@@ -25,18 +25,21 @@
 
 extern uint8_t _initEndpoints[];
 
-int PluggableUSB_::getInterface(uint8_t* interfaceNum)
+int PluggableUSB_::getInterface(uint8_t* interfaceCount)
 {
 	int sent = 0;
 	PUSBListNode* node;
 	for (node = rootNode; node; node = node->next) {
-		int res = node->getInterface(interfaceNum);
-		if (res < 0)
-			return -1;
-		sent += res;
+		if(node->interface() != 0xFF){
+			int res = node->getInterface(interfaceCount);
+			if (res < 0)
+				return -1;
+			sent += res;
+		}
 	}
 	return sent;
 }
+
 
 int PluggableUSB_::getDescriptor(int8_t type)
 {
@@ -69,6 +72,11 @@ bool PluggableUSB_::setup(USBSetup& setup, uint8_t interfaceNum)
 bool PluggableUSB_::plug(PUSBListNode *node)
 {
 	if ((lastEp + node->numEndpoints) > USB_ENDPOINTS) {
+		// No more free endpoints. Set interface to an invalid number
+		// so its ignored and the code can still run (without this) fine.
+		// Using signed here would force some signed/unsigned conversions
+		// which should be avoided in this case.
+		node->pluggedInterface = 0xFF;
 		return false;
 	}
 
