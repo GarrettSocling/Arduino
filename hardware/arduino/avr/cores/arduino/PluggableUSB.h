@@ -36,7 +36,7 @@ public:
 
 protected:
   virtual bool setup(USBSetup& setup) = 0;
-  virtual int getInterface(uint8_t* interfaceNum) = 0;
+  virtual void sendInterface(uint8_t* interfaceCount) = 0;
   virtual int getDescriptor(int8_t t) = 0;
 
   uint8_t pluggedInterface;
@@ -55,7 +55,7 @@ class PluggableUSB_ {
 public:
   PluggableUSB_();
   bool plug(PUSBListNode *node);
-  int getInterface(uint8_t* interfaceCount);
+  void sendInterface(uint8_t* interfaceCount);
   int getDescriptor(int8_t type);
   bool setup(USBSetup& setup, uint8_t interfaceNum);
 

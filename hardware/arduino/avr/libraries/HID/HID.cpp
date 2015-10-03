@@ -27,7 +27,7 @@ HID_& HID()
 	return obj;
 }
 
-int HID_::getInterface(uint8_t* interfaceCount)
+void HID_::sendInterface(uint8_t* interfaceCount)
 {
 	*interfaceCount += 1; // uses 1
 	HIDDescriptor hidInterface = {
@@ -35,7 +35,7 @@ int HID_::getInterface(uint8_t* interfaceCount)
 		D_HIDREPORT(descriptorSize),
 		D_ENDPOINT(USB_ENDPOINT_IN(endpoint()), USB_ENDPOINT_TYPE_INTERRUPT, USB_EP_SIZE, 0x01)
 	};
-	return USB_SendControl(0, &hidInterface, sizeof(hidInterface));
+	USB_SendControl(0, &hidInterface, sizeof(hidInterface));
 }
 
 int HID_::getDescriptor(int8_t type)

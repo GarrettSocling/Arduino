@@ -437,10 +437,11 @@ static u8 SendInterfaces()
 {
 	u8 interfaces = 0;
 
+	// TODO rename to SendInterface
 	CDC_GetInterface(&interfaces);
 
 #ifdef PLUGGABLE_USB_ENABLED
-	PluggableUSB().getInterface(&interfaces);
+	PluggableUSB().sendInterface(&interfaces);
 #endif
 
 	return interfaces;

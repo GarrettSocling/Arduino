@@ -25,19 +25,14 @@
 
 extern uint8_t _initEndpoints[];
 
-int PluggableUSB_::getInterface(uint8_t* interfaceCount)
+void PluggableUSB_::sendInterface(uint8_t* interfaceCount)
 {
-	int sent = 0;
 	PUSBListNode* node;
 	for (node = rootNode; node; node = node->next) {
 		if(node->interface() != 0xFF){
-			int res = node->getInterface(interfaceCount);
-			if (res < 0)
-				return -1;
-			sent += res;
+			node->sendInterface(interfaceCount);
 		}
 	}
-	return sent;
 }
 
 
