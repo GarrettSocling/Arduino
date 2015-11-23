@@ -71,7 +71,7 @@
     </or>
   </condition>
 
-  <property name="ARDUINO-BUILDER-VERSION" value="1.1.1" />
+  <property name="ARDUINO-BUILDER-VERSION" value="1.2.6" />
 
   <!-- Libraries required for running arduino -->
   <fileset dir=".." id="runtime.jars">
@@ -185,8 +185,8 @@
       <fileset dir="../libraries"/>
     </copy>
 
-    <download-library name="Firmata" version="2.4.4" tag="v2.4.4"/>
-    <download-library name="Bridge" version="1.1.0"/>
+    <download-library name="Firmata" version="2.5.0" tag="2.5.0"/>
+    <download-library name="Bridge" version="1.6.0"/>
     <download-library name="Robot_Control" version="1.0.2"/>
     <download-library name="Robot_Motor" version="1.0.2"/>
     <download-library name="RobotIRremote" version="1.0.2"/>
@@ -515,7 +515,7 @@
   <target name="linux-checkos" unless="linux">
     <echo>
       =======================================================
-      Arduino for Linux can only be built on on unix systems.
+      Arduino for Linux can only be built on unix systems.
 
       Bye.
       =======================================================
@@ -537,6 +537,10 @@
       <fileset dir="linux/dist" includes="lib/**" />
     </copy>
 
+    <copy todir="linux/work/lib">
+      <fileset dir="shared" includes="icons/**/*.png" />
+    </copy>
+
     <copy todir="linux/work/lib" flatten="true">
       <fileset refid="runtime.jars" />
     </copy>
@@ -545,13 +549,17 @@
       <param name="target.path" value="linux/work" />
     </antcall>
 
-    <copy todir="linux/work" file="linux/dist/arduino" />
-    <copy todir="linux/work" file="linux/dist/arduino.desktop" />
-    <copy todir="linux/work" file="linux/dist/install.sh" />
-    <chmod perm="755" file="linux/work/arduino" />
+    <copy tofile="linux/work/lib/arduino-arduinoide.xml" file="linux/dist/mime.xml" />
+    <copy todir="linux/work/lib" file="linux/dist/desktop.template" />
 
     <copy todir="linux/work" file="linux/dist/arduino" />
-    <chmod perm="755" file="linux/work/arduino" />
+    <copy todir="linux/work" file="linux/dist/install.sh" />
+    <copy todir="linux/work" file="linux/dist/uninstall.sh" />
+
+    <chmod perm="ugo+x">
+        <fileset dir="linux/work" includes="arduino" />
+        <fileset dir="linux/work" includes="**/*.sh" />
+    </chmod>
 
     <antcall target="unzip">
       <param name="archive_file" value="./libastylej-2.05.1.zip" />
@@ -836,7 +844,7 @@
     <copy file="${staging_folder}/arduino-builder-windows/arduino-builder.exe" tofile="windows/work/arduino-builder.exe" />
     <chmod perm="755" file="windows/work/arduino-builder.exe" />
     <move file="${staging_folder}/arduino-builder-windows/tools" tofile="windows/work/tools-builder"/>
-    <chmod perm="755" file="windows/work/tools-builder/ctags/5.8-arduino4/ctags.exe" />
+    <chmod perm="755" file="windows/work/tools-builder/ctags/5.8-arduino5/ctags.exe" />
     <copy todir="windows/work/hardware" overwrite="true">
       <fileset dir="${staging_folder}/arduino-builder-windows/hardware" includes="*.txt"/>
     </copy>

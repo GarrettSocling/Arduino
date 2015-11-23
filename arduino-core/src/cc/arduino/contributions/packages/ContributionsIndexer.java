@@ -92,7 +92,9 @@ public class ContributionsIndexer {
     }
 
     List<ContributedPackage> packages = index.getPackages();
-    Collection<ContributedPackage> packagesWithTools = packages.stream().filter(input -> input.getTools() != null).collect(Collectors.toList());
+    Collection<ContributedPackage> packagesWithTools = packages.stream()
+      .filter(input -> input.getTools() != null && !input.getTools().isEmpty())
+      .collect(Collectors.toList());
 
     for (ContributedPackage pack : packages) {
       for (ContributedPlatform platform : pack.getPlatforms()) {
@@ -260,6 +262,9 @@ public class ContributionsIndexer {
 
   private void syncToolWithFilesystem(ContributedPackage pack, File installationFolder, String toolName, String version) {
     ContributedTool tool = pack.findTool(toolName, version);
+    if (tool == null) {
+      tool = pack.findResolvedTool(toolName, version);
+    }
     if (tool == null) {
       return;
     }
