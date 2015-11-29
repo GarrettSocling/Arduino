@@ -32,7 +32,6 @@ package cc.arduino.contributions.packages.ui;
 import cc.arduino.contributions.DownloadableContribution;
 import cc.arduino.contributions.packages.ContributedPlatform;
 import cc.arduino.contributions.packages.ContributionInstaller;
-import cc.arduino.contributions.packages.ContributionsIndexer;
 import cc.arduino.contributions.ui.*;
 import cc.arduino.utils.Progress;
 import processing.app.BaseNoGui;
@@ -94,9 +93,6 @@ public class ContributionManagerUI extends InstallerJDialog {
 
     categoryChooser.removeActionListener(categoryChooserActionListener);
 
-    ContributionsIndexer indexer = BaseNoGui.indexer;
-    getContribModel().setIndexer(indexer);
-
     categoryFilter = null;
     categoryChooser.removeAllItems();
 
@@ -106,8 +102,8 @@ public class ContributionManagerUI extends InstallerJDialog {
 
     // Enable categories combo only if there are two or more choices
     categoryChooser.addItem(new DropdownAllCoresItem());
-    categoryChooser.addItem(new DropdownUpdatableCoresItem(indexer));
-    Collection<String> categories = indexer.getCategories();
+    categoryChooser.addItem(new DropdownUpdatableCoresItem());
+    Collection<String> categories = BaseNoGui.indexer.getCategories();
     for (String s : categories) {
       categoryChooser.addItem(new DropdownCoreOfCategoryItem(s));
     }
@@ -151,6 +147,7 @@ public class ContributionManagerUI extends InstallerJDialog {
         setProgressVisible(false, "");
       }
     });
+    installerThread.setName("ContributionManager Update Thread");
     installerThread.setUncaughtExceptionHandler(new InstallerJDialogUncaughtExceptionHandler(this, noConnectionErrorMessage));
     installerThread.start();
   }
@@ -161,10 +158,10 @@ public class ContributionManagerUI extends InstallerJDialog {
       List<String> errors = new LinkedList<>();
       try {
         setProgressVisible(true, tr("Installing..."));
-        errors.addAll(installer.install(platformToInstall, this::setProgress));
         if (platformToRemove != null && !platformToRemove.isReadOnly()) {
           errors.addAll(installer.remove(platformToRemove));
         }
+        errors.addAll(installer.install(platformToInstall, this::setProgress));
         onIndexesUpdated();
       } catch (Exception e) {
         throw new RuntimeException(e);
@@ -175,6 +172,7 @@ public class ContributionManagerUI extends InstallerJDialog {
         }
       }
     });
+    installerThread.setName("ContributionManager Install Thread");
     installerThread.setUncaughtExceptionHandler(new InstallerJDialogUncaughtExceptionHandler(this, noConnectionErrorMessage));
     installerThread.start();
   }
@@ -200,6 +198,7 @@ public class ContributionManagerUI extends InstallerJDialog {
         setProgressVisible(false, "");
       }
     });
+    installerThread.setName("ContributionManager Remove Thread");
     installerThread.setUncaughtExceptionHandler(new InstallerJDialogUncaughtExceptionHandler(this, noConnectionErrorMessage));
     installerThread.start();
   }
