@@ -611,6 +611,22 @@
       <param name="JVM" value="${LINUX32_BUNDLED_JVM}"/>
     </antcall>
 
+    <delete dir="${staging_folder}/arduino-builder-arm" includeemptydirs="true"/>
+    <mkdir dir="${staging_folder}/arduino-builder-arm"/>
+    <antcall target="untar">
+      <param name="archive_file" value="./arduino-builder-arm-${ARDUINO-BUILDER-VERSION}.tar.bz2" />
+      <param name="archive_url" value="http://downloads.arduino.cc/tools/arduino-builder-arm-${ARDUINO-BUILDER-VERSION}.tar.bz2" />
+      <param name="final_folder" value="${staging_folder}/arduino-builder-arm/arduino-builder" />
+      <param name="dest_folder" value="${staging_folder}/arduino-builder-arm" />
+    </antcall>
+    <copy file="${staging_folder}/arduino-builder-arm/arduino-builder" tofile="linux/work/arduino-builder" />
+    <chmod perm="755" file="linux/work/arduino-builder" />
+    <move file="${staging_folder}/arduino-builder-arm/tools" tofile="linux/work/tools-builder"/>
+    <copy todir="linux/work/hardware" overwrite="true">
+      <fileset dir="${staging_folder}/arduino-builder-arm/hardware" includes="*.txt"/>
+    </copy>
+    <delete dir="${staging_folder}/arduino-builder-arm" includeemptydirs="true"/>
+
     <antcall target="avr-toolchain-bundle">
       <param name="unpack_target" value="untar"/>
       <param name="gcc_archive_file" value="avr-gcc-4.8.1-arduino5-armhf-pc-linux-gnu.tar.bz2"/>
